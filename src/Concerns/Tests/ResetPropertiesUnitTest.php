@@ -2,6 +2,7 @@
 
 namespace Livewire\Concerns\Tests;
 
+use Livewire\Form;
 use Livewire\Livewire;
 use Tests\TestComponent;
 
@@ -135,6 +136,23 @@ class ResetPropertiesUnitTest extends \Tests\TestCase
         $this->assertEquals('baz', $component->pullResult['foo']);
         $this->assertFalse(array_key_exists('bob', $component->pullResult));
     }
+
+    public function test_can_reset_form_object()
+    {
+        Livewire::test(ResetPropertiesComponent::class)
+            ->assertSetStrict('form.bob', 'lob')
+            ->set('form.bob', 'law')
+            ->assertSetStrict('form.bob', 'law')
+            ->call('resetAll')
+            ->assertSetStrict('form.bob', 'lob')
+            ->set('form.bob', 'law')
+            ->assertSetStrict('form.bob', 'law');
+    }
+}
+
+class FormStub extends Form
+{
+    public $bob = 'lob';
 }
 
 class ResetPropertiesComponent extends TestComponent
@@ -150,6 +168,8 @@ class ResetPropertiesComponent extends TestComponent
     public ?int $nullProp = null;
 
     public $pullResult = null;
+
+    public FormStub $form;
 
     public function resetAll()
     {
